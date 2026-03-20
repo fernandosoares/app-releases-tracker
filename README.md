@@ -228,6 +228,22 @@ chmod +x app-releases-tracker-*.AppImage
 ./app-releases-tracker-*.AppImage
 ```
 
+### "How do I verify download integrity?"
+
+Each release includes a `SHA256SUMS.txt` file.
+
+On Linux/macOS:
+
+```bash
+sha256sum -c SHA256SUMS.txt
+```
+
+On Windows PowerShell:
+
+```powershell
+Get-FileHash .\app-releases-tracker.Setup.0.5.0.exe -Algorithm SHA256
+```
+
 ## License
 
 No license file is currently configured. Add one before broad redistribution.

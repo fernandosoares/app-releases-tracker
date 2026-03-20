@@ -61,9 +61,7 @@ describe("appsStore", () => {
       ],
     });
 
-    useAppsStore.getState().applyUpdates([
-      { id: "1", latestVersion: "1.2.0" },
-    ]);
+    useAppsStore.getState().applyUpdates([{ id: "1", latestVersion: "1.2.0" }]);
 
     const app = useAppsStore.getState().apps[0];
     expect(app?.latestVersion).toBe("1.2.0");

@@ -107,6 +107,11 @@ jobs:
           pattern: release-*
           merge-multiple: true
 
+      - name: Generate SHA256 checksums
+        run: |
+          cd dist-all
+          sha256sum * > SHA256SUMS.txt
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
