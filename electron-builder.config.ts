@@ -22,6 +22,8 @@ const config: Configuration = {
   mac: {
     target: [{ target: "dmg", arch: ["x64", "arm64"] }],
     category: "public.app-category.utilities",
+    hardenedRuntime: true,
+    gatekeeperAssess: false,
   },
   publish: {
     provider: "github",

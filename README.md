@@ -177,6 +177,14 @@ For higher API limits or private release sources:
 - `GITLAB_TOKEN`
 - `GITEA_TOKEN`
 
+For signed release artifacts in GitHub Actions:
+
+- `CSC_LINK`
+- `CSC_KEY_PASSWORD`
+- `APPLE_ID`
+- `APPLE_APP_SPECIFIC_PASSWORD`
+- `APPLE_TEAM_ID`
+
 ### Data location
 
 SQLite database is stored in Electron `userData` directory as `tracker.db`.
