@@ -1,5 +1,6 @@
 import React from "react";
 import type { TrackedAppDto } from "../../../main/ipc/dto/TrackedAppDto";
+import { bridge } from "../../api/bridge";
 import { Badge } from "../atoms/Badge";
 import { Button } from "../atoms/Button";
 
@@ -35,7 +36,7 @@ export function AppCard({
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            window.api.invoke("shell:openExternal" as never, app.sourceUrl);
+            void bridge.openExternal(app.sourceUrl);
           }}
         >
           {app.sourceUrl}

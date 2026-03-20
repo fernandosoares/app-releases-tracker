@@ -1,6 +1,6 @@
 {
   "name": "app-releases-tracker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Track app releases from GitHub, GitLab and more",
   "private": true,
   "main": "out/main/index.js",

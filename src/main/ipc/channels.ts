@@ -8,6 +8,9 @@ export const IpcChannels = {
   APPS_ADD: "apps:add",
   APPS_REMOVE: "apps:remove",
 
+  // Shell
+  SHELL_OPEN_EXTERNAL: "shell:openExternal",
+
   // Update checking
   UPDATES_CHECK_ALL: "updates:checkAll",
   UPDATES_CHECK_ONE: "updates:checkOne",

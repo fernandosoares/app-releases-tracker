@@ -34,6 +34,12 @@ export const bridge = {
     return window.api.invoke(IpcChannels.APPS_REMOVE, { id }) as Promise<void>;
   },
 
+  openExternal(url: string): Promise<void> {
+    return window.api.invoke(IpcChannels.SHELL_OPEN_EXTERNAL, {
+      url,
+    }) as Promise<void>;
+  },
+
   // ---------------------------------------------------------------------------
   // Update checking
   // ---------------------------------------------------------------------------

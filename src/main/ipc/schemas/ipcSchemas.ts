@@ -30,3 +30,15 @@ export const CheckOnePayloadSchema = z.object({
 });
 
 export type CheckOnePayload = z.infer<typeof CheckOnePayloadSchema>;
+
+// ---------------------------------------------------------------------------
+// shell:openExternal
+// ---------------------------------------------------------------------------
+export const OpenExternalPayloadSchema = z.object({
+  url: z
+    .string()
+    .url("Must be a valid URL")
+    .startsWith("https://", "Only HTTPS URLs are accepted"),
+});
+
+export type OpenExternalPayload = z.infer<typeof OpenExternalPayloadSchema>;
