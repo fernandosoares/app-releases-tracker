@@ -1,5 +1,13 @@
-import { app, BrowserWindow, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  type MenuItemConstructorOptions,
+  dialog,
+  shell,
+} from "electron";
 import { join } from "path";
+import { Version } from "./domain/release/Version";
 import { SqliteTrackedAppRepository } from "./infrastructure/persistence/SqliteTrackedAppRepository";
 import { GiteaReleaseSource } from "./infrastructure/sources/GiteaReleaseSource";
 import { GitHubReleaseSource } from "./infrastructure/sources/GitHubReleaseSource";
@@ -18,6 +26,7 @@ import { PollingScheduler } from "./PollingScheduler";
 // ---------------------------------------------------------------------------
 
 let scheduler: PollingScheduler | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 function bootstrap(): void {
   const dbPath = join(app.getPath("userData"), "tracker.db");
@@ -33,7 +42,29 @@ function bootstrap(): void {
   const notifications = new ElectronNotificationAdapter();
 
   // Use cases
-  const addTrackedApp = new AddTrackedApp(repository);
+  const addTrackedApp = new AddTrackedApp(
+    repository,
+    (sourceUrl: string): string | undefined => {
+      try {
+        const url = new URL(sourceUrl);
+        if (url.hostname !== "github.com") return undefined;
+
+        const [owner, repoRaw] = url.pathname.replace(/^\//, "").split("/");
+        const repo = (repoRaw ?? "").replace(/\.git$/, "").toLowerCase();
+
+        if (
+          owner?.toLowerCase() === "fernandosoares" &&
+          repo === "app-releases-tracker"
+        ) {
+          return app.getVersion();
+        }
+      } catch {
+        return undefined;
+      }
+
+      return undefined;
+    },
+  );
   const removeTrackedApp = new RemoveTrackedApp(repository);
   const checkForUpdates = new CheckForUpdates(
     repository,
@@ -91,10 +122,121 @@ function createWindow(): void {
   } else {
     win.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  mainWindow = win;
+}
+
+function createAppMenu(): void {
+  const template: MenuItemConstructorOptions[] = [
+    {
+      label: "File",
+      submenu: [{ role: "quit" }],
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+      ],
+    },
+    {
+      label: "Help",
+      submenu: [
+        {
+          label: "Show Version",
+          click: () => {
+            void dialog.showMessageBox(mainWindow ?? undefined, {
+              type: "info",
+              title: "App Version",
+              message: `App Releases Tracker v${app.getVersion()}`,
+              detail: `Platform: ${process.platform}`,
+            });
+          },
+        },
+        {
+          label: "Check for Updates",
+          click: () => {
+            void checkSelfUpdate();
+          },
+        },
+        {
+          label: "Open Releases Page",
+          click: () => {
+            void shell.openExternal(
+              "https://github.com/fernandosoares/app-releases-tracker/releases/latest",
+            );
+          },
+        },
+      ],
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+async function checkSelfUpdate(): Promise<void> {
+  try {
+    const response = await fetch(
+      "https://api.github.com/repos/fernandosoares/app-releases-tracker/releases/latest",
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          "User-Agent": "app-releases-tracker",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Update check failed: ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      tag_name: string;
+      html_url?: string;
+    };
+
+    const current = Version.parse(app.getVersion());
+    const latest = Version.parse(data.tag_name);
+
+    if (latest.isGreaterThan(current)) {
+      const result = await dialog.showMessageBox(mainWindow ?? undefined, {
+        type: "info",
+        title: "Update available",
+        message: `A newer version is available: v${latest.toString()}`,
+        detail: `You are running v${current.toString()}.`,
+        buttons: ["Open Releases", "Close"],
+        defaultId: 0,
+        cancelId: 1,
+      });
+
+      if (result.response === 0) {
+        await shell.openExternal(
+          data.html_url ??
+            "https://github.com/fernandosoares/app-releases-tracker/releases/latest",
+        );
+      }
+
+      return;
+    }
+
+    await dialog.showMessageBox(mainWindow ?? undefined, {
+      type: "info",
+      title: "Up to date",
+      message: `You are on the latest version (v${current.toString()}).`,
+    });
+  } catch (error) {
+    await dialog.showMessageBox(mainWindow ?? undefined, {
+      type: "error",
+      title: "Update check failed",
+      message: error instanceof Error ? error.message : String(error),
+    });
+  }
 }
 
 app.whenReady().then(() => {
   bootstrap();
+  createAppMenu();
   createWindow();
 
   app.on("activate", () => {

@@ -24,3 +24,10 @@ export interface AppUpdateResult {
 export interface CheckForUpdatesOutput {
   results: AppUpdateResult[];
 }
+
+export interface DownloadStartOutput {
+  cancelled: boolean;
+  filePath?: string;
+  assetName?: string;
+  releaseTag?: string;
+}

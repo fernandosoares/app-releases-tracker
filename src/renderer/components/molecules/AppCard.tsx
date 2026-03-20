@@ -7,14 +7,18 @@ import { Button } from "../atoms/Button";
 interface AppCardProps {
   app: TrackedAppDto;
   checking: boolean;
+  downloading: boolean;
   onCheck: () => void;
+  onDownload: () => void;
   onRemove: () => void;
 }
 
 export function AppCard({
   app,
   checking,
+  downloading,
   onCheck,
+  onDownload,
   onRemove,
 }: AppCardProps): React.JSX.Element {
   const versionBadge = app.hasUpdateAvailable ? (
@@ -59,6 +63,16 @@ export function AppCard({
         <Button variant="ghost" size="sm" loading={checking} onClick={onCheck}>
           Check
         </Button>
+        {app.hasUpdateAvailable && (
+          <Button
+            variant="primary"
+            size="sm"
+            loading={downloading}
+            onClick={onDownload}
+          >
+            Update
+          </Button>
+        )}
         <Button variant="danger" size="sm" onClick={onRemove}>
           Remove
         </Button>

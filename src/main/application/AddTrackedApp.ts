@@ -1,6 +1,7 @@
 import { TrackedApp } from "../domain/app/TrackedApp";
 import { TrackedAppId } from "../domain/app/TrackedAppId";
 import { TrackedAppRepository } from "../domain/ports/TrackedAppRepository";
+import { Version } from "../domain/release/Version";
 
 export interface AddTrackedAppInput {
   name: string;
@@ -21,15 +22,26 @@ export interface AddTrackedAppOutput {
  * is deferred to the first CheckForUpdates run.
  */
 export class AddTrackedApp {
-  constructor(private readonly repository: TrackedAppRepository) {}
+  constructor(
+    private readonly repository: TrackedAppRepository,
+    private readonly resolveCurrentVersion?: (
+      sourceUrl: string,
+    ) => string | undefined,
+  ) {}
 
   async execute(input: AddTrackedAppInput): Promise<AddTrackedAppOutput> {
     const id = TrackedAppId.generate();
+
+    const currentVersionRaw = this.resolveCurrentVersion?.(input.sourceUrl);
+    const currentVersion = currentVersionRaw
+      ? Version.parse(currentVersionRaw)
+      : undefined;
 
     const app = TrackedApp.create({
       id,
       name: input.name,
       sourceUrl: input.sourceUrl,
+      currentVersion,
     });
 
     await this.repository.save(app);

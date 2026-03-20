@@ -19,6 +19,7 @@ export function DashboardPage(): React.JSX.Element {
   } = useAppsStore();
 
   const [checkingAll, setCheckingAll] = useState(false);
+  const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
   const [addError, setAddError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [updatesOnly, setUpdatesOnly] = useState(false);
@@ -55,6 +56,19 @@ export function DashboardPage(): React.JSX.Element {
       await addApp(name, sourceUrl);
     } catch (err) {
       setAddError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleDownload(appId: string): Promise<void> {
+    setDownloadingIds((prev) => new Set([...prev, appId]));
+    try {
+      await bridge.downloadUpdate(appId);
+    } finally {
+      setDownloadingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(appId);
+        return next;
+      });
     }
   }
 
@@ -129,7 +143,9 @@ export function DashboardPage(): React.JSX.Element {
             apps={visibleApps}
             loading={loading}
             checkingIds={checkingIds}
+            downloadingIds={downloadingIds}
             onCheck={checkOne}
+            onDownload={handleDownload}
             onRemove={removeApp}
           />
         </section>

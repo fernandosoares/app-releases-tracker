@@ -42,3 +42,12 @@ export const OpenExternalPayloadSchema = z.object({
 });
 
 export type OpenExternalPayload = z.infer<typeof OpenExternalPayloadSchema>;
+
+// ---------------------------------------------------------------------------
+// download:start
+// ---------------------------------------------------------------------------
+export const DownloadStartPayloadSchema = z.object({
+  appId: z.string().min(1, "App ID is required"),
+});
+
+export type DownloadStartPayload = z.infer<typeof DownloadStartPayloadSchema>;

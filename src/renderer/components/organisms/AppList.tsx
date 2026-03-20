@@ -7,7 +7,9 @@ interface AppListProps {
   apps: TrackedAppDto[];
   loading: boolean;
   checkingIds: Set<string>;
+  downloadingIds: Set<string>;
   onCheck: (id: string) => void;
+  onDownload: (id: string) => void;
   onRemove: (id: string) => void;
 }
 
@@ -15,7 +17,9 @@ export function AppList({
   apps,
   loading,
   checkingIds,
+  downloadingIds,
   onCheck,
+  onDownload,
   onRemove,
 }: AppListProps): React.JSX.Element {
   if (loading) {
@@ -41,7 +45,9 @@ export function AppList({
           <AppCard
             app={app}
             checking={checkingIds.has(app.id)}
+            downloading={downloadingIds.has(app.id)}
             onCheck={() => onCheck(app.id)}
+            onDownload={() => onDownload(app.id)}
             onRemove={() => onRemove(app.id)}
           />
         </li>

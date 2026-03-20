@@ -3,6 +3,7 @@ import type { RemoveTrackedApp } from "../../application/RemoveTrackedApp";
 import type { CheckForUpdates } from "../../application/CheckForUpdates";
 import type { TrackedAppRepository } from "../../domain/ports/TrackedAppRepository";
 import { registerAppHandlers } from "./appHandlers";
+import { registerDownloadHandlers } from "./downloadHandlers";
 import { registerShellHandlers } from "./shellHandlers";
 import { registerUpdateHandlers } from "./updateHandlers";
 
@@ -21,6 +22,10 @@ export function registerAllHandlers(deps: HandlerDeps): void {
   });
 
   registerShellHandlers();
+
+  registerDownloadHandlers({
+    repository: deps.repository,
+  });
 
   registerUpdateHandlers({
     checkForUpdates: deps.checkForUpdates,

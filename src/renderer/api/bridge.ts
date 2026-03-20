@@ -1,6 +1,7 @@
 import type {
   AddAppPayload,
   CheckForUpdatesOutput,
+  DownloadStartOutput,
   TrackedAppDto,
 } from "./contracts";
 
@@ -9,6 +10,7 @@ const IpcChannels = {
   APPS_ADD: "apps:add",
   APPS_REMOVE: "apps:remove",
   SHELL_OPEN_EXTERNAL: "shell:openExternal",
+  DOWNLOAD_START: "download:start",
   UPDATES_CHECK_ALL: "updates:checkAll",
   UPDATES_CHECK_ONE: "updates:checkOne",
   UPDATES_AVAILABLE: "updates:available",
@@ -48,6 +50,12 @@ export const bridge = {
     return window.api.invoke(IpcChannels.SHELL_OPEN_EXTERNAL, {
       url,
     }) as Promise<void>;
+  },
+
+  downloadUpdate(appId: string): Promise<DownloadStartOutput> {
+    return window.api.invoke(IpcChannels.DOWNLOAD_START, {
+      appId,
+    }) as Promise<DownloadStartOutput>;
   },
 
   // ---------------------------------------------------------------------------
