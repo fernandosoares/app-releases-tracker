@@ -22,7 +22,7 @@ const config: Configuration = {
   mac: {
     target: [{ target: "dmg", arch: ["x64", "arm64"] }],
     category: "public.app-category.utilities",
-    hardenedRuntime: true,
+    hardenedRuntime: Boolean(process.env["CSC_LINK"]),
     gatekeeperAssess: false,
   },
   publish: {

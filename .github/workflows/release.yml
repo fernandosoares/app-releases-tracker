@@ -67,16 +67,28 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx electron-builder --linux --publish never
 
-      - name: Package — Windows
-        if: matrix.os == 'windows-latest'
+      - name: Package — Windows (unsigned)
+        if: matrix.os == 'windows-latest' && secrets.CSC_LINK == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --publish never
+
+      - name: Package — Windows (signed)
+        if: matrix.os == 'windows-latest' && secrets.CSC_LINK != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
         run: npx electron-builder --win --publish never
 
-      - name: Package — macOS
-        if: matrix.os == 'macos-latest'
+      - name: Package — macOS (unsigned)
+        if: matrix.os == 'macos-latest' && secrets.CSC_LINK == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --mac --publish never
+
+      - name: Package — macOS (signed + notarized)
+        if: matrix.os == 'macos-latest' && secrets.CSC_LINK != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK: ${{ secrets.CSC_LINK }}

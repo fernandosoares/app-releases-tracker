@@ -185,6 +185,9 @@ For signed release artifacts in GitHub Actions:
 - `APPLE_APP_SPECIFIC_PASSWORD`
 - `APPLE_TEAM_ID`
 
+When signing secrets are not configured, the release workflow falls back to
+unsigned Windows/macOS artifacts so CI releases still complete.
+
 ### Data location
 
 SQLite database is stored in Electron `userData` directory as `tracker.db`.
