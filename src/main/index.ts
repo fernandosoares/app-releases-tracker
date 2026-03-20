@@ -146,12 +146,19 @@ function createAppMenu(): void {
         {
           label: "Show Version",
           click: () => {
-            void dialog.showMessageBox(mainWindow, {
-              type: "info",
-              title: "App Version",
-              message: `App Releases Tracker v${app.getVersion()}`,
-              detail: `Platform: ${process.platform}`,
-            });
+            void (mainWindow
+              ? dialog.showMessageBox(mainWindow, {
+                  type: "info",
+                  title: "App Version",
+                  message: `App Releases Tracker v${app.getVersion()}`,
+                  detail: `Platform: ${process.platform}`,
+                })
+              : dialog.showMessageBox({
+                  type: "info",
+                  title: "App Version",
+                  message: `App Releases Tracker v${app.getVersion()}`,
+                  detail: `Platform: ${process.platform}`,
+                }));
           },
         },
         {
@@ -200,15 +207,25 @@ async function checkSelfUpdate(): Promise<void> {
     const latest = Version.parse(data.tag_name);
 
     if (latest.isGreaterThan(current)) {
-      const result = await dialog.showMessageBox(mainWindow, {
-        type: "info",
-        title: "Update available",
-        message: `A newer version is available: v${latest.toString()}`,
-        detail: `You are running v${current.toString()}.`,
-        buttons: ["Open Releases", "Close"],
-        defaultId: 0,
-        cancelId: 1,
-      });
+      const result = await (mainWindow
+        ? dialog.showMessageBox(mainWindow, {
+            type: "info",
+            title: "Update available",
+            message: `A newer version is available: v${latest.toString()}`,
+            detail: `You are running v${current.toString()}.`,
+            buttons: ["Open Releases", "Close"],
+            defaultId: 0,
+            cancelId: 1,
+          })
+        : dialog.showMessageBox({
+            type: "info",
+            title: "Update available",
+            message: `A newer version is available: v${latest.toString()}`,
+            detail: `You are running v${current.toString()}.`,
+            buttons: ["Open Releases", "Close"],
+            defaultId: 0,
+            cancelId: 1,
+          }));
 
       if (result.response === 0) {
         await shell.openExternal(
@@ -220,17 +237,29 @@ async function checkSelfUpdate(): Promise<void> {
       return;
     }
 
-    await dialog.showMessageBox(mainWindow, {
-      type: "info",
-      title: "Up to date",
-      message: `You are on the latest version (v${current.toString()}).`,
-    });
+    await (mainWindow
+      ? dialog.showMessageBox(mainWindow, {
+          type: "info",
+          title: "Up to date",
+          message: `You are on the latest version (v${current.toString()}).`,
+        })
+      : dialog.showMessageBox({
+          type: "info",
+          title: "Up to date",
+          message: `You are on the latest version (v${current.toString()}).`,
+        }));
   } catch (error) {
-    await dialog.showMessageBox(mainWindow, {
-      type: "error",
-      title: "Update check failed",
-      message: error instanceof Error ? error.message : String(error),
-    });
+    await (mainWindow
+      ? dialog.showMessageBox(mainWindow, {
+          type: "error",
+          title: "Update check failed",
+          message: error instanceof Error ? error.message : String(error),
+        })
+      : dialog.showMessageBox({
+          type: "error",
+          title: "Update check failed",
+          message: error instanceof Error ? error.message : String(error),
+        }));
   }
 }
 

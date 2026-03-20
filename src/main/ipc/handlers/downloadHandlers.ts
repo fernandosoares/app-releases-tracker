@@ -55,11 +55,17 @@ export function registerDownloadHandlers(deps: DownloadHandlerDeps): void {
       return { cancelled: true };
     }
 
-    const save = await dialog.showSaveDialog(parent, {
-      title: `Save ${asset.name}`,
-      defaultPath: asset.name,
-      buttonLabel: "Download",
-    });
+    const save = parent
+      ? await dialog.showSaveDialog(parent, {
+          title: `Save ${asset.name}`,
+          defaultPath: asset.name,
+          buttonLabel: "Download",
+        })
+      : await dialog.showSaveDialog({
+          title: `Save ${asset.name}`,
+          defaultPath: asset.name,
+          buttonLabel: "Download",
+        });
 
     if (save.canceled || !save.filePath) {
       return { cancelled: true };
@@ -67,14 +73,23 @@ export function registerDownloadHandlers(deps: DownloadHandlerDeps): void {
 
     await downloadToFile(asset.url, save.filePath);
 
-    const openChoice = await dialog.showMessageBox(parent, {
-      type: "question",
-      title: "Download complete",
-      message: `${asset.name} was downloaded successfully.`,
-      buttons: ["Open file", "Open folder", "Close"],
-      defaultId: 0,
-      cancelId: 2,
-    });
+    const openChoice = parent
+      ? await dialog.showMessageBox(parent, {
+          type: "question",
+          title: "Download complete",
+          message: `${asset.name} was downloaded successfully.`,
+          buttons: ["Open file", "Open folder", "Close"],
+          defaultId: 0,
+          cancelId: 2,
+        })
+      : await dialog.showMessageBox({
+          type: "question",
+          title: "Download complete",
+          message: `${asset.name} was downloaded successfully.`,
+          buttons: ["Open file", "Open folder", "Close"],
+          defaultId: 0,
+          cancelId: 2,
+        });
 
     if (openChoice.response === 0) {
       await shell.openPath(save.filePath);
@@ -97,14 +112,23 @@ async function pickRelease(
   releases: ReleaseOption[],
 ): Promise<ReleaseOption | null> {
   const options = releases.slice(0, 8);
-  const result = await dialog.showMessageBox(parent, {
-    type: "question",
-    title: "Choose release",
-    message: `Select a release to download for ${appName}:`,
-    buttons: [...options.map((r) => r.title), "Cancel"],
-    cancelId: options.length,
-    defaultId: 0,
-  });
+  const result = parent
+    ? await dialog.showMessageBox(parent, {
+        type: "question",
+        title: "Choose release",
+        message: `Select a release to download for ${appName}:`,
+        buttons: [...options.map((r) => r.title), "Cancel"],
+        cancelId: options.length,
+        defaultId: 0,
+      })
+    : await dialog.showMessageBox({
+        type: "question",
+        title: "Choose release",
+        message: `Select a release to download for ${appName}:`,
+        buttons: [...options.map((r) => r.title), "Cancel"],
+        cancelId: options.length,
+        defaultId: 0,
+      });
 
   if (result.response === options.length) {
     return null;
@@ -118,14 +142,23 @@ async function pickAsset(
   release: ReleaseOption,
 ): Promise<ReleaseAsset | null> {
   const assets = release.assets.slice(0, 10);
-  const result = await dialog.showMessageBox(parent, {
-    type: "question",
-    title: "Choose asset",
-    message: `Select an installer/package for ${release.tag}:`,
-    buttons: [...assets.map((a) => a.name), "Cancel"],
-    cancelId: assets.length,
-    defaultId: 0,
-  });
+  const result = parent
+    ? await dialog.showMessageBox(parent, {
+        type: "question",
+        title: "Choose asset",
+        message: `Select an installer/package for ${release.tag}:`,
+        buttons: [...assets.map((a) => a.name), "Cancel"],
+        cancelId: assets.length,
+        defaultId: 0,
+      })
+    : await dialog.showMessageBox({
+        type: "question",
+        title: "Choose asset",
+        message: `Select an installer/package for ${release.tag}:`,
+        buttons: [...assets.map((a) => a.name), "Cancel"],
+        cancelId: assets.length,
+        defaultId: 0,
+      });
 
   if (result.response === assets.length) {
     return null;
