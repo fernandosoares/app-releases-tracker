@@ -146,7 +146,7 @@ function createAppMenu(): void {
         {
           label: "Show Version",
           click: () => {
-            void dialog.showMessageBox(mainWindow ?? undefined, {
+            void dialog.showMessageBox(mainWindow ?? null, {
               type: "info",
               title: "App Version",
               message: `App Releases Tracker v${app.getVersion()}`,
@@ -200,7 +200,7 @@ async function checkSelfUpdate(): Promise<void> {
     const latest = Version.parse(data.tag_name);
 
     if (latest.isGreaterThan(current)) {
-      const result = await dialog.showMessageBox(mainWindow ?? undefined, {
+      const result = await dialog.showMessageBox(mainWindow ?? null, {
         type: "info",
         title: "Update available",
         message: `A newer version is available: v${latest.toString()}`,
@@ -220,13 +220,13 @@ async function checkSelfUpdate(): Promise<void> {
       return;
     }
 
-    await dialog.showMessageBox(mainWindow ?? undefined, {
+    await dialog.showMessageBox(mainWindow ?? null, {
       type: "info",
       title: "Up to date",
       message: `You are on the latest version (v${current.toString()}).`,
     });
   } catch (error) {
-    await dialog.showMessageBox(mainWindow ?? undefined, {
+    await dialog.showMessageBox(mainWindow ?? null, {
       type: "error",
       title: "Update check failed",
       message: error instanceof Error ? error.message : String(error),

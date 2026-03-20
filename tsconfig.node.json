@@ -4,7 +4,7 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "dom"],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -15,7 +15,8 @@
     "outDir": "out/",
     "baseUrl": ".",
     "paths": {
-      "@main/*": ["src/main/*"]
+      "@main/*": ["src/main/*"],
+      "@renderer/*": ["src/renderer/*"]
     },
     "types": ["electron-vite/node", "node"]
   },
@@ -23,6 +24,7 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
+    "src/main/ipc/handlers/downloadHandlers.ts",
     "tests/unit/**/*",
     "tests/integration/**/*"
   ]

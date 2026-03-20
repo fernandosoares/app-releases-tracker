@@ -55,7 +55,7 @@ export function registerDownloadHandlers(deps: DownloadHandlerDeps): void {
       return { cancelled: true };
     }
 
-    const save = await dialog.showSaveDialog(parent, {
+    const save = await dialog.showSaveDialog(parent ?? null, {
       title: `Save ${asset.name}`,
       defaultPath: asset.name,
       buttonLabel: "Download",
@@ -67,7 +67,7 @@ export function registerDownloadHandlers(deps: DownloadHandlerDeps): void {
 
     await downloadToFile(asset.url, save.filePath);
 
-    const openChoice = await dialog.showMessageBox(parent, {
+    const openChoice = await dialog.showMessageBox(parent ?? null, {
       type: "question",
       title: "Download complete",
       message: `${asset.name} was downloaded successfully.`,
@@ -97,7 +97,7 @@ async function pickRelease(
   releases: ReleaseOption[],
 ): Promise<ReleaseOption | null> {
   const options = releases.slice(0, 8);
-  const result = await dialog.showMessageBox(parent, {
+  const result = await dialog.showMessageBox(parent ?? null, {
     type: "question",
     title: "Choose release",
     message: `Select a release to download for ${appName}:`,
@@ -118,7 +118,7 @@ async function pickAsset(
   release: ReleaseOption,
 ): Promise<ReleaseAsset | null> {
   const assets = release.assets.slice(0, 10);
-  const result = await dialog.showMessageBox(parent, {
+  const result = await dialog.showMessageBox(parent ?? null, {
     type: "question",
     title: "Choose asset",
     message: `Select an installer/package for ${release.tag}:`,
