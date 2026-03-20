@@ -1,0 +1,3 @@
+# build/
+# Electron Builder resources (icons, NSIS scripts, etc.)
+# Place app icon here: build/icon.png (512x512)
