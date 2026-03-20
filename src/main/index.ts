@@ -1,6 +1,7 @@
 import { app, BrowserWindow, shell } from "electron";
 import { join } from "path";
 import { SqliteTrackedAppRepository } from "./infrastructure/persistence/SqliteTrackedAppRepository";
+import { GiteaReleaseSource } from "./infrastructure/sources/GiteaReleaseSource";
 import { GitHubReleaseSource } from "./infrastructure/sources/GitHubReleaseSource";
 import { GitLabReleaseSource } from "./infrastructure/sources/GitLabReleaseSource";
 import { ReleaseSourceFactory } from "./infrastructure/sources/ReleaseSourceFactory";
@@ -26,6 +27,7 @@ function bootstrap(): void {
   const factory = new ReleaseSourceFactory([
     new GitHubReleaseSource({ token: process.env["GITHUB_TOKEN"] }),
     new GitLabReleaseSource({ token: process.env["GITLAB_TOKEN"] }),
+    new GiteaReleaseSource({ token: process.env["GITEA_TOKEN"] }),
   ]);
   const routingSource = new RoutingReleaseSource(factory);
   const notifications = new ElectronNotificationAdapter();

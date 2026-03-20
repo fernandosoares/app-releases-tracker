@@ -1,6 +1,6 @@
 # App Releases Tracker
 
-A desktop app to track releases from GitHub and GitLab, notify when new versions are available, and keep your app catalog organized in one place.
+A desktop app to track releases from GitHub, GitLab, and Gitea-compatible hosts, notify when new versions are available, and keep your app catalog organized in one place.
 
 Built with Electron + TypeScript, using a DDD + Hexagonal core in the Main process and a React + Zustand renderer.
 
@@ -30,6 +30,7 @@ If you install apps from multiple sources, checking updates manually becomes noi
 
 - GitHub Releases API
 - GitLab Releases API (including self-hosted-style URLs)
+- Gitea Releases API (including Codeberg and self-hosted instances)
 
 ## Tech Stack
 
@@ -173,6 +174,7 @@ For higher API limits or private release sources:
 
 - `GITHUB_TOKEN`
 - `GITLAB_TOKEN`
+- `GITEA_TOKEN`
 
 ### Data location
 

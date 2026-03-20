@@ -20,7 +20,7 @@ export class ReleaseSourceFactory {
     if (!source) {
       throw new Error(
         `No release source adapter found for URL: ${sourceUrl}. ` +
-          "Supported sources: GitHub, GitLab.",
+          "Supported sources: GitHub, GitLab, Gitea.",
       );
     }
 

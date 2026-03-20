@@ -30,10 +30,14 @@ export class GitLabReleaseSource implements ReleaseSourcePort {
     try {
       const url = new URL(sourceUrl);
       if (url.protocol !== "https:") return false;
-      // Accept gitlab.com and any self-hosted instance that has /gl/ or is
-      // explicitly not GitHub/npm/pypi — keep it simple: accept anything that
-      // is NOT github.com or known non-gitlab hosts.
-      return url.hostname !== "github.com";
+      if (url.hostname === "github.com") return false;
+      // gitlab.com and most self-hosted GitLab instances use either a
+      // gitlab-like hostname or the '/-/' path segment in project pages.
+      return (
+        url.hostname.includes("gitlab") ||
+        url.pathname.includes("/-/") ||
+        sourceUrl.includes("/api/v4/")
+      );
     } catch {
       return false;
     }
