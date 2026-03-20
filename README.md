@@ -140,6 +140,7 @@ This repository uses two GitHub Actions workflows:
 
 - `CI`: lint, typecheck, tests, and build checks
 - `Release`: triggers on tags `v*.*.*`, builds Linux/Windows/macOS packages, and publishes a GitHub Release
+- `Security`: dependency review, critical npm audit, and CodeQL analysis
 
 ### Create a release
 
