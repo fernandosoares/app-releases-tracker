@@ -24,8 +24,6 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/main/ipc/handlers/downloadHandlers.ts",
-    "tests/unit/**/*",
-    "tests/integration/**/*"
+    "src/main/ipc/handlers/downloadHandlers.ts"
   ]
 }
