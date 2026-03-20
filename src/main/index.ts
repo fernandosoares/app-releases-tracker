@@ -28,7 +28,45 @@ import { PollingScheduler } from "./PollingScheduler";
 let scheduler: PollingScheduler | null = null;
 let mainWindow: BrowserWindow | null = null;
 
-function bootstrap(): void {
+function isSelfTrackerSourceUrl(sourceUrl: string): boolean {
+  try {
+    const url = new URL(sourceUrl);
+    if (url.hostname !== "github.com") return false;
+
+    const [owner, repoRaw] = url.pathname.replace(/^\//, "").split("/");
+    const repo = (repoRaw ?? "").replace(/\.git$/, "").toLowerCase();
+
+    return (
+      owner?.toLowerCase() === "fernandosoares" &&
+      repo === "app-releases-tracker"
+    );
+  } catch {
+    return false;
+  }
+}
+
+async function syncSelfTrackedCurrentVersion(
+  repository: SqliteTrackedAppRepository,
+): Promise<void> {
+  const runningVersion = Version.parse(app.getVersion());
+  const apps = await repository.listAll();
+
+  for (const tracked of apps) {
+    if (!isSelfTrackerSourceUrl(tracked.sourceUrl)) {
+      continue;
+    }
+
+    if (
+      !tracked.current ||
+      tracked.current.toString() !== runningVersion.toString()
+    ) {
+      tracked.setCurrentVersion(runningVersion);
+      await repository.save(tracked);
+    }
+  }
+}
+
+async function bootstrap(): Promise<void> {
   const dbPath = join(app.getPath("userData"), "tracker.db");
 
   // Infrastructure
@@ -45,24 +83,7 @@ function bootstrap(): void {
   const addTrackedApp = new AddTrackedApp(
     repository,
     (sourceUrl: string): string | undefined => {
-      try {
-        const url = new URL(sourceUrl);
-        if (url.hostname !== "github.com") return undefined;
-
-        const [owner, repoRaw] = url.pathname.replace(/^\//, "").split("/");
-        const repo = (repoRaw ?? "").replace(/\.git$/, "").toLowerCase();
-
-        if (
-          owner?.toLowerCase() === "fernandosoares" &&
-          repo === "app-releases-tracker"
-        ) {
-          return app.getVersion();
-        }
-      } catch {
-        return undefined;
-      }
-
-      return undefined;
+      return isSelfTrackerSourceUrl(sourceUrl) ? app.getVersion() : undefined;
     },
   );
   const removeTrackedApp = new RemoveTrackedApp(repository);
@@ -79,6 +100,8 @@ function bootstrap(): void {
     removeTrackedApp,
     checkForUpdates,
   });
+
+  await syncSelfTrackedCurrentVersion(repository);
 
   // Background polling (initial check + scheduled interval)
   scheduler = new PollingScheduler(checkForUpdates);
@@ -263,8 +286,8 @@ async function checkSelfUpdate(): Promise<void> {
   }
 }
 
-app.whenReady().then(() => {
-  bootstrap();
+app.whenReady().then(async () => {
+  await bootstrap();
   createAppMenu();
   createWindow();
 
