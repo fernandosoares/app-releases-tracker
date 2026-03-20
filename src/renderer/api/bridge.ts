@@ -1,14 +1,24 @@
-import { IpcChannels } from "../../main/ipc/channels";
-import type { TrackedAppDto } from "../../main/ipc/dto/TrackedAppDto";
-import type { AddAppPayload } from "../../main/ipc/schemas/ipcSchemas";
-import type { CheckForUpdatesOutput } from "../../main/application/CheckForUpdates";
+import type {
+  AddAppPayload,
+  CheckForUpdatesOutput,
+  TrackedAppDto,
+} from "./contracts";
+
+const IpcChannels = {
+  APPS_GET_ALL: "apps:getAll",
+  APPS_ADD: "apps:add",
+  APPS_REMOVE: "apps:remove",
+  SHELL_OPEN_EXTERNAL: "shell:openExternal",
+  UPDATES_CHECK_ALL: "updates:checkAll",
+  UPDATES_CHECK_ONE: "updates:checkOne",
+  UPDATES_AVAILABLE: "updates:available",
+} as const;
 
 /**
  * Typed bridge wrapping window.api for use in React components.
  *
  * All IPC calls go through here — no component ever calls window.api directly.
- * This is the only file in renderer/ that is allowed to reference IPC channel
- * names or Main-side DTO types.
+ * This is the only file in renderer/ that references IPC channel names.
  */
 export const bridge = {
   // ---------------------------------------------------------------------------

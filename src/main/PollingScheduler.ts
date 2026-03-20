@@ -1,4 +1,4 @@
-import type { CheckForUpdates } from "../application/CheckForUpdates";
+import type { CheckForUpdates } from "./application/CheckForUpdates";
 
 const DEFAULT_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 

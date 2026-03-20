@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { TrackedAppDto } from "../../main/ipc/dto/TrackedAppDto";
+import type { TrackedAppDto } from "../api/contracts";
 import { bridge } from "../api/bridge";
 
 interface AppsState {

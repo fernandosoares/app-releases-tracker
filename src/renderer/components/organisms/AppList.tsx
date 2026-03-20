@@ -1,5 +1,5 @@
 import React from "react";
-import type { TrackedAppDto } from "../../../main/ipc/dto/TrackedAppDto";
+import type { TrackedAppDto } from "../../api/contracts";
 import { AppCard } from "../molecules/AppCard";
 import { Spinner } from "../atoms/Spinner";
 

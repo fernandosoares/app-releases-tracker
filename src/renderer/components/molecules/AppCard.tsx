@@ -1,5 +1,5 @@
 import React from "react";
-import type { TrackedAppDto } from "../../../main/ipc/dto/TrackedAppDto";
+import type { TrackedAppDto } from "../../api/contracts";
 import { bridge } from "../../api/bridge";
 import { Badge } from "../atoms/Badge";
 import { Button } from "../atoms/Button";
