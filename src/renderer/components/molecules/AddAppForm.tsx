@@ -19,15 +19,20 @@ export function AddAppForm({ onSubmit }: AddAppFormProps): React.JSX.Element {
 
   function validate(): FormErrors {
     const errs: FormErrors = {};
-    if (!name.trim()) errs.name = "Name is required";
-    if (!sourceUrl.trim()) errs.sourceUrl = "URL is required";
-    else if (!/^https:\/\//i.test(sourceUrl))
+    const normalizedName = name.trim();
+    const normalizedUrl = sourceUrl.trim();
+
+    if (!normalizedName) errs.name = "Name is required";
+    if (!normalizedUrl) errs.sourceUrl = "URL is required";
+    else if (!/^https:\/\//i.test(normalizedUrl))
       errs.sourceUrl = "Must start with https://";
     return errs;
   }
 
   async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
+    const normalizedName = name.trim();
+    const normalizedUrl = sourceUrl.trim();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -36,7 +41,7 @@ export function AddAppForm({ onSubmit }: AddAppFormProps): React.JSX.Element {
     setErrors({});
     setSubmitting(true);
     try {
-      await onSubmit(name.trim(), sourceUrl.trim());
+      await onSubmit(normalizedName, normalizedUrl);
       setName("");
       setSourceUrl("");
     } finally {

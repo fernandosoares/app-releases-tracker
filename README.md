@@ -144,8 +144,8 @@ This repository uses two GitHub Actions workflows:
 ### Create a release
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.5.0
+git push origin v0.5.0
 ```
 
 The Release workflow will:
@@ -183,6 +183,7 @@ SQLite database is stored in Electron `userData` directory as `tracker.db`.
 ## Testing Strategy
 
 - Unit tests for domain/application/infrastructure components
+- Unit tests for renderer components and store behavior
 - Integration tests for SQLite repository behavior
 - Fast Vitest execution for local feedback loops
 
