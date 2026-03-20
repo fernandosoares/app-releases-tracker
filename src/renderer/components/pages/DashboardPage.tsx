@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppsStore } from "../../store/appsStore";
 import { bridge } from "../../api/bridge";
 import { Header } from "../organisms/Header";
@@ -20,6 +20,11 @@ export function DashboardPage(): React.JSX.Element {
 
   const [checkingAll, setCheckingAll] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [updatesOnly, setUpdatesOnly] = useState(false);
+  const [sortBy, setSortBy] = useState<"name" | "status" | "lastChecked">(
+    "status",
+  );
 
   // Load apps on mount and subscribe to push updates
   useEffect(() => {
@@ -55,12 +60,62 @@ export function DashboardPage(): React.JSX.Element {
 
   const updateCount = apps.filter((a) => a.hasUpdateAvailable).length;
 
+  const visibleApps = useMemo(() => {
+    const normalizedQuery = search.trim().toLowerCase();
+
+    const filtered = apps.filter((app) => {
+      if (updatesOnly && !app.hasUpdateAvailable) {
+        return false;
+      }
+
+      if (!normalizedQuery) {
+        return true;
+      }
+
+      return (
+        app.name.toLowerCase().includes(normalizedQuery) ||
+        app.sourceUrl.toLowerCase().includes(normalizedQuery)
+      );
+    });
+
+    const sorted = [...filtered];
+
+    if (sortBy === "name") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
+      return sorted;
+    }
+
+    if (sortBy === "lastChecked") {
+      sorted.sort((a, b) => {
+        const ta = a.lastCheckedAt ? Date.parse(a.lastCheckedAt) : 0;
+        const tb = b.lastCheckedAt ? Date.parse(b.lastCheckedAt) : 0;
+        return tb - ta;
+      });
+      return sorted;
+    }
+
+    // status: updates first, then alphabetic name
+    sorted.sort((a, b) => {
+      const statusDelta =
+        Number(b.hasUpdateAvailable) - Number(a.hasUpdateAvailable);
+      if (statusDelta !== 0) return statusDelta;
+      return a.name.localeCompare(b.name);
+    });
+    return sorted;
+  }, [apps, search, updatesOnly, sortBy]);
+
   return (
     <div className="dashboard">
       <Header
         updateCount={updateCount}
         onCheckAll={handleCheckAll}
         checking={checkingAll}
+        search={search}
+        onSearchChange={setSearch}
+        updatesOnly={updatesOnly}
+        onToggleUpdatesOnly={() => setUpdatesOnly((v) => !v)}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
       <main className="dashboard__content">
@@ -71,7 +126,7 @@ export function DashboardPage(): React.JSX.Element {
 
         <section className="dashboard__main">
           <AppList
-            apps={apps}
+            apps={visibleApps}
             loading={loading}
             checkingIds={checkingIds}
             onCheck={checkOne}

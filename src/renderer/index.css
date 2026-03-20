@@ -100,6 +100,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
   padding: 0.9rem 1.5rem;
   border-bottom: 1px solid #1e293b;
   background: #0d1117;
@@ -113,6 +115,43 @@ body {
   font-weight: 600;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
+}
+.header__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header__search,
+.header__select {
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.6rem;
+}
+.header__search {
+  width: 240px;
+}
+.header__search:focus,
+.header__select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+@media (max-width: 920px) {
+  .header {
+    align-items: flex-start;
+  }
+
+  .header__controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .header__search {
+    width: 100%;
+  }
 }
 
 /* ── Dashboard layout ────────────────────────────────── */
