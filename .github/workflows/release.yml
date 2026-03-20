@@ -81,9 +81,7 @@ jobs:
 
       - name: Generate SHA256 checksums
         run: |
-          cd dist-all/release-linux
-          sha256sum * > SHA256SUMS.txt
-          cd ../..
+          find dist-all -type f ! -name SHA256SUMS.txt -exec sha256sum {} \; > dist-all/SHA256SUMS.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -92,6 +90,6 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true
-          files: dist-all/release-linux/*
+          files: dist-all/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
